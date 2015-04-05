@@ -1,4 +1,12 @@
 Group members:
 
 150-400 Word Description:
-  We propose to build a special version of chess with speech recognition (think Harry Potter - Wizard Chess). Our game will be able to recognize moves from speech (ex. “E FOUR TO E FIVE” will move a piece at e4 to e5). We will build normal chess from scratch in Python, with standard functionality, and call a speech recognition API using a laptop microphone for making moves. We also plan to write move information in .csv files for move analysis. We will need to keep track of the 8 by 8 board and whether a piece exists at certain positions in the board or not. Because different chess pieces have different movement rules, we will need to take into account the entire board position before allowing a move to be made and then executing it. In addition, one of the more challenging parts of the project will be experimenting with voice recognition frameworks and selecting the one that fits our project best. The game will develop our game-making skills and allow us to experiment with new technologies such as speech recognition to reinvent the classic game of chess.
+We propose to build a special version of chess with speech recognition (think Harry Potter - Wizard Chess). 
+Our game will be able to recognize moves from speech (ex. “E FOUR TO E FIVE” will move a piece at e4 to e5). 
+We will build normal chess from scratch in Python, with standard functionality, and call a speech recognition API using a laptop microphone for making moves. 
+We also plan to write move information in .csv files for move analysis. 
+We will need to keep track of the 8 by 8 board and whether a piece exists at certain positions in the board or not. 
+Because different chess pieces have different movement rules, we will need to take into account the entire board 
+position before allowing a move to be made and then executing it. In addition, one of the more challenging parts of the 
+project will be experimenting with voice recognition frameworks and selecting the one that fits our project best. 
+The game will develop our game-making skills and allow us to experiment with new technologies such as speech recognition to reinvent the classic game of chess.
