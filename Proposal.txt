@@ -1,6 +1,7 @@
-Group members:
+Group members: Raymond Yin, Joseph Cappadona
 
 150-400 Word Description:
+
 We propose to build a special version of chess with speech recognition (think Harry Potter - Wizard Chess). 
 Our game will be able to recognize moves from speech (ex. “E FOUR TO E FIVE” will move a piece at e4 to e5). 
 We will build normal chess from scratch in Python, with standard functionality, and call a speech recognition API using a laptop microphone for making moves. 
