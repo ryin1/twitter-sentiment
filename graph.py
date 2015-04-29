@@ -29,6 +29,10 @@ class Plotter():
 						    )
 						)
 		self.data = Data([Scatter(x=x, y=y)])
+
+	def __str__(self):
+		return str('X values: {}\nY values: {}'.format(x, y))
+
 	def save_graph(self):
 		py.image.save_as({'data': self.data, 'layout': self.layout},
 						'{}_graph.png'.format(self.username))
@@ -37,9 +41,10 @@ class Plotter():
 							filename='{}\'s Tweet Sentiment'.format(self.username))
 		return plot_url
 
-with open('graph_data.pickle', 'rb') as f:
-	x,y = pickle.load(f)
+if __name__ == '__main__':
+	with open('graph_data.pickle', 'rb') as f:
+		x,y = pickle.load(f)
 
-plotter = Plotter(x,y, '@locodoco')
-plotter.save_graph()
-plotter.open_graph()
+	plotter = Plotter(x,y, '@locodoco')
+	plotter.save_graph()
+	plotter.open_graph()

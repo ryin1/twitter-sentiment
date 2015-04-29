@@ -1,0 +1,71 @@
+import pickle
+from alchemyapi import AlchemyAPI
+alchemyapi = AlchemyAPI()
+import code
+
+class Analyzer():
+
+	def __init__(self, tweets):
+		self.tweets = tweets
+		self.alchemy = AlchemyAPI()
+		self.keywords = {}
+		self.keyword_list = []
+		self.sentiments = []
+
+	def avg_sentiment(self):
+		''' Returns average sentiment of all the Analyzer's tweets. '''
+		score = 0
+		for tweet in self.tweets:
+			sentiment = self.alchemy.sentiment('text', tweet['text'])
+			if 'docSentiment' not in sentiment:
+				continue
+			sentiment = sentiment['docSentiment']
+			if sentiment['type'] != 'neutral':
+				score += float(sentiment['score'])
+				self.sentiments.append(float(sentiment['score']))
+				tweet['penis'] = 5
+				print('appended shit: ',self.sentiments)
+			else:
+				self.sentiments.append(0.0)
+				tweet['penis'] = 6
+				print('appended 0: ',self.sentiments)
+		# Attach each sentiment to each tweet
+		self.tweets = [dict(tweet, sentiment=sent) for tweet, sent in
+					   zip(self.tweets, self.sentiments)]
+		return score / len(self.tweets)
+
+	def timeline(self):
+		''' Graphs tweet sentiment for a given user against time. '''
+
+	def get_keywords(self):
+		''' Returns top keywords in the tweets. '''
+		for tweet in self.tweets: 
+			tweet_words = self.alchemy.keywords('text', tweet['text'])
+			if 'keywords' not in tweet_words:
+				continue
+			tweet_words = tweet_words['keywords']
+			tweet['keywords'] = tweet_words
+			for word in tweet_words:
+				word_text = word['text'].encode('utf-8')
+				if word_text not in self.keywords:
+					self.keywords[word_text] = float(word['relevance'])
+				else:
+					self.keywords[word_text] += float(word['relevance'])
+		max_relev = max(self.keywords.values())
+		print(max_relev)
+		for k, v in self.keywords.items():
+			self.keywords[k] /= max_relev
+		self.keyword_list = sorted(self.keywords.items(), key=lambda x: x[1],
+						reverse=True)
+		return self.keyword_list
+
+with open('stream_data.pickle', 'rb') as f:
+	tweets = pickle.load(f)
+
+analyzer = Analyzer(tweets)
+avg = analyzer.avg_sentiment()
+#print(avg)
+#wordz = analyzer.get_keywords()
+#for k,v in wordz:
+#	print('{}: {}'.format(k, v))
+code.interact(local=locals())
