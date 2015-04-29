@@ -21,6 +21,7 @@ ACCESS_TOKEN_SECRET="T2lzQA9YFWxuHeYmyLM6715iXlXUg8fl8TzWpv9PugRzj"
 
 lim = 30
 
+
 class StdOutListener(StreamListener):
     """ A listener handles tweets are the received from the stream.
     This is a basic listener that just prints received tweets to stdout.
@@ -48,7 +49,8 @@ class StdOutListener(StreamListener):
     def on_error(self, status):
         print(status)
 
-def gather_tweets(username=None, keyword=None, limit=200):#, duration=10):
+
+def gather_tweets(api, auth, username=None, keyword=None, limit=200):
     if username:
         tweets = []
         count = 0

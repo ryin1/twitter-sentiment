@@ -1,11 +1,25 @@
+from __future__ import absolute_import, print_function
 from flask import Flask, render_template, request, redirect, url_for, json
 import time
 import bs4
+import tweepy
 import requests
+import stream
+
+
+from tweepy.streaming import StreamListener
+from tweepy import OAuthHandler
+from tweepy import Stream
+from analysis import Analyzer
+from stream import StdOutListener
 
 # Create app
 app = Flask(__name__)
+CONSUMER_KEY="7ZI3BzYpi1v0ZTJvsbjB696tN"
+CONSUMER_SECRET="vzwV9riclXjPYv1TqQUjN9UaoAAiet9EAHqjPYdWIOcQ1DQWYj"
 
+ACCESS_TOKEN="2982406223-rIgKwKlpduITV7hkrreYBkFQDw0AY7wiMDR79pr"
+ACCESS_TOKEN_SECRET="T2lzQA9YFWxuHeYmyLM6715iXlXUg8fl8TzWpv9PugRzj"
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -19,28 +33,33 @@ def home():
         # parse as json
         jsondata = json.dumps(data, separators=(',', ':'))
         if 'topic' in jsondata:
-            stream_time = float(data['time'][0])
-            start = time.time()
-            while time.time() - start < stream_time:
-                # analysis here
-                #
-                #
-                #
-                #
-                #
-                pass
-            analysis_data = [1, 2, 6, 7, 27]
             new_data = json.loads(jsondata)
-            new_data['data'] = analysis_data
-            jsondata = json.dumps(new_data, separators=(',', ':'))
+            auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+            auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+            api = tweepy.API(auth)
+            # tweets = gather_tweets(username=s) # last 200 tweets
+            tweets = stream.gather_tweets(api, auth, keyword=new_data['topic'][0], limit=time)
+            # print('tweets',tweets)
+            # Create analyzer
+            analyzer = Analyzer(tweets, new_data['topic'][0])
+            avg = analyzer.calc_sentiment()
+            # keywrds = analyzer.get_keywords()
+            analyzer.save_sentiment_data()
             return redirect((url_for('log', data=jsondata, mode='debug')))
         elif 'username' in jsondata:
-            # analysis here
-            #
-            #
-            #
-            #
-            #
+            print('\n\n', 'you submitted a username', '\n\n')
+            new_data = json.loads(jsondata)
+            auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+            auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+            api = tweepy.API(auth)
+            # tweets = gather_tweets(username=s) # last 200 tweets
+            tweets = stream.gather_tweets(api, auth, username=new_data['username'][0])
+            # print('tweets',tweets)
+            # Create analyzer
+            analyzer = Analyzer(tweets, new_data['username'][0])
+            avg = analyzer.calc_sentiment()
+            # keywrds = analyzer.get_keywords()
+            analyzer.save_sentiment_data()
             return redirect((url_for('log', data=jsondata, mode='debug')))
 
 
@@ -58,7 +77,7 @@ def log(data, mode):
     elif 'topic' in jsondata:
         topic = jsondata['topic'][0]
         # render homepage template
-        return render_template('stream.html', topic=topic, data=jsondata['data'])
+        return render_template('stream.html', topic=topic, data=jsondata)
     else:
         # render homepage template
         return render_template('boot.html')
