@@ -73,12 +73,12 @@ def gather_tweets(username=None, keyword=None, limit=200):#, duration=10):
                          'can\'t be None')
 
 if __name__ == '__main__':
-    s = 'basketball'
+    s = 'baltimore'
     auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
     api = tweepy.API(auth)
     #tweets = gather_tweets(username=s) # last 200 tweets
-    tweets = gather_tweets(keyword=s, limit=10)
+    tweets = gather_tweets(keyword=s, limit=100)
     #print('tweets',tweets)
     # Create analyzer
     analyzer = Analyzer(tweets, s)
