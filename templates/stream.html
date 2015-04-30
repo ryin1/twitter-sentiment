@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Agency - Start Bootstrap Theme</title>
+    <title>Tweet Sentiment Analysis by Topic</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
@@ -72,13 +72,13 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h3>{{ topic }}! </h3>
+                    <img src="{{ url_for('static', filename=('img/' + topic + '_' + rand + '.png')) }}">
+
+                    <h3>You successfully analyzed the sentiment of the last {{ limit }} tweets on the topic "{{ topic }}"! </h3>
                     </br>
                     </br>
                     Click <a href="/#services">here</a> to go back and try again.
                     </br>
-
-                    <img src="{{ url_for('static', filename=('img/' + topic + '.png')) }}">
                 </div>
             </div>
         </div>

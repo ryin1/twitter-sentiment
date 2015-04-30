@@ -50,7 +50,7 @@ class StdOutListener(StreamListener):
         print(status)
 
 
-def gather_tweets(api, auth, username=None, keyword=None, limit=200):
+def gather_tweets(api, auth, username=None, keyword=None, limit=30):
     if username:
         tweets = []
         count = 0

@@ -40,7 +40,7 @@ class Analyzer():
                 tweet['sentiment'] = 0.0
         return score / len(self.tweets)
 
-    def save_sentiment_data(self):
+    def save_sentiment_data(self, num):
         ''' Pickle-dumps tweet sentiment for a given input against time. '''
         # with open('graph_data.pickle', 'wb') as f:
         times, sents = [], []
@@ -53,8 +53,7 @@ class Analyzer():
             	pass
                 #print('didnt find  a sentiment in: {}'.format(tweet['text'].encode('utf-8')))
         plotter = Plotter(times, sents, self.descrip)
-        plotter.save_graph()
-        plotter.open_graph()
+        plotter.save_graph(num)
 
     def get_keywords(self):
         ''' Returns top keywords in the tweets. '''

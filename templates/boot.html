@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Agency - Start Bootstrap Theme</title>
+    <title>CIS192 - Twitter Sentiment Analysis Web Appth</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="static/css/bootstrap.min.css" rel="stylesheet">
@@ -83,7 +83,7 @@
                 <div class="col-lg-12 text-center">
                     <h3 class="section-heading">Enter a twitter username to analyze the sentiment of their tweets!</h3>
 
-                    <h4 class="section-subheading">Once you click the submit button, the back-end will gather and process all of the data, which should take an additional 20-30 seconds. Please be patient, and don't refresh the page!</h4>
+                    <h4 class="section-subheading">This will analyze the sentiment of the specified user's past 200 tweets (actually, only 30 for the purposes of this demo). Once you click the submit button, the back-end will gather and process all of the data, which can take some time. Please be patient, and don't refresh the page!</h4>
                     <h4 class="section-subheading">Username:</h4>
                     <form method=post>
                         <dl>
@@ -103,13 +103,13 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h3 class="section-heading">Enter a topic to analyze tweets that are currently being written about it!</h3>
-                    <h4 class="section-subheading">Once you click the stream button, the back-end will gather tweets for the specified duration. Then, it will process all of the data, which should take an additional 20-30 seconds. Please be patient, and don't refresh the page!</h4>
+                    <h4 class="section-subheading">Once you click the stream button, the back-end will gather tweets until it hits the limit you specified. Depending on the limit, this could take anywhere from a few seconds to a few minutes. Please be patient, and don't refresh the page!</h4>
                     <form method=post>
                         <dl>
                             <h4 class="section-subheading">Topic:</h4>
                             <dd><input type=text name=topic>
-                            <h4 class="section-subheading">Stream for (seconds):</h4>
-                            <dd><input type=text name=time>
+                            <h4 class="section-subheading">Number of tweets:</h4>
+                            <dd><input type=text name=limit>
                             <dd><input type=submit value=Submit>
                         </dl>
                       </form>

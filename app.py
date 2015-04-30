@@ -5,6 +5,7 @@ import bs4
 import tweepy
 import requests
 import stream
+import random
 
 
 from tweepy.streaming import StreamListener
@@ -34,33 +35,36 @@ def home():
         jsondata = json.dumps(data, separators=(',', ':'))
         if 'topic' in jsondata:
             new_data = json.loads(jsondata)
+            new_data['rand'] = str(int(random.random()*999999999))
+            print('\n\n\n', int(new_data['limit'][0]), type(int(new_data['limit'][0])), '\n\n\n')
             auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
             auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
             api = tweepy.API(auth)
             # tweets = gather_tweets(username=s) # last 200 tweets
-            tweets = stream.gather_tweets(api, auth, keyword=new_data['topic'][0], limit=time)
+            tweets = stream.gather_tweets(api, auth, keyword=new_data['topic'][0], limit=int(new_data['limit'][0]))
             # print('tweets',tweets)
             # Create analyzer
             analyzer = Analyzer(tweets, new_data['topic'][0])
             avg = analyzer.calc_sentiment()
             # keywrds = analyzer.get_keywords()
-            analyzer.save_sentiment_data()
-            return redirect((url_for('log', data=jsondata, mode='debug')))
+            analyzer.save_sentiment_data(int(new_data['rand']))
+            return redirect((url_for('log', data=json.dumps(new_data), mode='debug')))
         elif 'username' in jsondata:
             print('\n\n', 'you submitted a username', '\n\n')
             new_data = json.loads(jsondata)
+            new_data['rand'] = str(int(random.random()*999999999))
             auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
             auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
             api = tweepy.API(auth)
             # tweets = gather_tweets(username=s) # last 200 tweets
-            tweets = stream.gather_tweets(api, auth, username=new_data['username'][0])
+            tweets = stream.gather_tweets(api, auth, username=new_data['username'][0], limit=30)
             # print('tweets',tweets)
             # Create analyzer
             analyzer = Analyzer(tweets, new_data['username'][0])
             avg = analyzer.calc_sentiment()
             # keywrds = analyzer.get_keywords()
-            analyzer.save_sentiment_data()
-            return redirect((url_for('log', data=jsondata, mode='debug')))
+            analyzer.save_sentiment_data(int(new_data['rand']))
+            return redirect((url_for('log', data=json.dumps(new_data), mode='debug')))
 
 
 @app.route('/log/<data>/<mode>')
@@ -73,11 +77,12 @@ def log(data, mode):
         bs = bs4.BeautifulSoup(response_text)
         profile_image_url = bs.find_all(class_='ProfileAvatar-container u-block js-tooltip profile-picture media-thumbnail', href=True)[0]['href']
         # render homepage template
-        return render_template('success.html', username=username, profile_image_url=profile_image_url)
+        return render_template('success.html', username=username, profile_image_url=profile_image_url, rand=jsondata['rand'])
     elif 'topic' in jsondata:
         topic = jsondata['topic'][0]
+        limit = int(jsondata['limit'][0])
         # render homepage template
-        return render_template('stream.html', topic=topic, data=jsondata)
+        return render_template('stream.html', topic=topic, limit=limit, rand=jsondata['rand'])
     else:
         # render homepage template
         return render_template('boot.html')
@@ -89,6 +94,7 @@ def main():
     poop = False
     analysis_data = dict()
     app.debug = True
+    app.config["CACHE_TYPE"] = "null"
     app.run()
 
 

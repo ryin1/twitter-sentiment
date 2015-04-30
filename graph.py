@@ -2,6 +2,7 @@ import plotly.plotly as py
 from plotly.graph_objs import *
 import pickle
 from datetime import datetime
+import os
 
 
 class Plotter():
@@ -29,14 +30,15 @@ class Plotter():
             )
         )
         )
-        self.data = Data([Scatter(x=x, y=y)])
+        self.data = Data([Scatter(x=x, y=y, mode="lines+markers")])
 
     def __str__(self):
         return str('X values: {}\nY values: {}'.format(x, y))
 
-    def save_graph(self):
-        py.image.save_as({'data': self.data, 'layout': self.layout},
-                         'static/img/{}.png'.format(self.username))
+    def save_graph(self, num):
+        if os.path.isfile('static/img/{}.png'.format(self.username)):
+            os.remove('static/img/{}.png'.format(self.username))
+        py.image.save_as({'data': self.data, 'layout': self.layout}, 'static/img/{}_{}.png'.format(self.username, num))
 
     def open_graph(self):
         plot_url = py.plot(self.data, layout=self.layout,
