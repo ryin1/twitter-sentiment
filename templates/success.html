@@ -71,6 +71,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
+                    <img src="{{ profile_image_url }}" height="250" width="250">
+
                     <img src="{{ url_for('static', filename=('img/' + username + '_' + rand + '.png')) }}">
 
                     <h3>Success! You analyzed the sentiment of <a href="{{ 'https://twitter.com/' + username }}">@{{ username }}'s</a> tweets! </h3>
@@ -79,7 +81,6 @@
                     </br>
                     </br>
                     </br>
-                    <img src="{{ profile_image_url }}" height="250" width="250">
                 </div>
             </div>
         </div>
