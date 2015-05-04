@@ -1,20 +1,16 @@
 from __future__ import absolute_import, print_function
 from flask import Flask, render_template, request, redirect, url_for, json
-import time
+from tweepy import OAuthHandler
+from analysis import Analyzer
 import bs4
 import tweepy
 import requests
 import stream
 import random
 
-from tweepy.streaming import StreamListener
-from tweepy import OAuthHandler
-from tweepy import Stream
-from analysis import Analyzer
-from stream import StdOutListener
-
 # Create app
 app = Flask(__name__)
+
 CONSUMER_KEY = "7ZI3BzYpi1v0ZTJvsbjB696tN"
 CONSUMER_SECRET = "vzwV9riclXjPYv1TqQUjN9UaoAAiet9EAHqjPYdWIOcQ1DQWYj"
 
@@ -34,39 +30,48 @@ def home():
         # parse as JSON
         jsondata = json.dumps(data, separators=(',', ':'))
         if 'topic' in jsondata:
+            # load data into dictionary
             new_data = json.loads(jsondata)
+
+            # create random number for this graph
             new_data['rand'] = str(int(random.random() * 999999999))
-            print('\n\n\n', int(new_data['limit'][0]), type(
-                int(new_data['limit'][0])), '\n\n\n')
+
+            # connect to twitter
             auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
             auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
             api = tweepy.API(auth)
-            # tweets = gather_tweets(username=s) # Last 50 tweets
+
+            # get the tweets
             tweets = stream.gather_tweets(
                 api, auth, keyword=new_data['topic'][0],
                 limit=int(new_data['limit'][0]))
+
             # Create analyzer
             analyzer = Analyzer(tweets, new_data['topic'][0])
-            avg = analyzer.calc_sentiment()
-            # keywrds = analyzer.get_keywords()
             analyzer.save_sentiment_data(int(new_data['rand']))
+
+            # render results page
             return redirect((url_for('log', data=json.dumps(new_data),
                                      mode='debug')))
         elif 'username' in jsondata:
-            print('\n\n', 'you submitted a username', '\n\n')
+            # load data into dictionary
             new_data = json.loads(jsondata)
+
+            # create random number for this graph
             new_data['rand'] = str(int(random.random() * 999999999))
+
+            # connect to twitter
             auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
             auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
             api = tweepy.API(auth)
-            # tweets = gather_tweets(username=s) # last 200 tweets
+
+            # get the tweets
             tweets = stream.gather_tweets(
-                api, auth, username=new_data['username'][0], limit=30)
-            # print('tweets',tweets)
+                api, auth, username=new_data['username'][0], limit=50)
+
             # Create analyzer
             analyzer = Analyzer(tweets, new_data['username'][0])
-            avg = analyzer.calc_sentiment()
-            # keywrds = analyzer.get_keywords()
+
             analyzer.save_sentiment_data(int(new_data['rand']))
             return redirect((url_for('log', data=json.dumps(new_data),
                                      mode='debug')))
@@ -75,8 +80,19 @@ def home():
 @app.route('/log/<data>/<mode>')
 def log(data, mode):
     jsondata = json.loads(data)
-    if 'username' in jsondata:
+    if 'topic' in jsondata:
+        # load variables that will be displayed on the page
+        topic = jsondata['topic'][0]
+        limit = int(jsondata['limit'][0])
+
+        # render streaming template
+        return render_template('stream.html', topic=topic, limit=limit,
+                               rand=jsondata['rand'])
+    elif 'username' in jsondata:
+        # load username that will be displayed on the page
         username = jsondata['username'][0]
+
+        # get the url for the profile picture of the username
         req = requests.get('https://twitter.com/' + username)
         response_text = req.text
         bs = bs4.BeautifulSoup(response_text)
@@ -84,15 +100,10 @@ def log(data, mode):
                         'profile-picture media-thumbnail')
         profile_image_url = bs.find_all(
             class_=class_string, href=True)[0]['href']
-        # render homepage template
+
+        # render username query success template
         return render_template('success.html', username=username,
                                profile_image_url=profile_image_url,
-                               rand=jsondata['rand'])
-    elif 'topic' in jsondata:
-        topic = jsondata['topic'][0]
-        limit = int(jsondata['limit'][0])
-        # render homepage template
-        return render_template('stream.html', topic=topic, limit=limit,
                                rand=jsondata['rand'])
     else:
         # render homepage template
@@ -100,10 +111,7 @@ def log(data, mode):
 
 
 def main():
-    global analysis_data
-    analysis_data = dict()
     app.debug = True
-    app.config["CACHE_TYPE"] = "null"
     app.run()
 
 
