@@ -8,6 +8,7 @@ from plotly.graph_objs import *
 from datetime import datetime
 
 
+# Function timer decorator
 def timeit(function):
     def timed(*args, **kwargs):
         start = time.time()
