@@ -1,18 +1,36 @@
 import plotly.plotly as py
-from plotly.graph_objs import *
 import pickle
-from datetime import datetime
 import os
+import code
+import time
+
+from plotly.graph_objs import *
+from datetime import datetime
+
+
+# Function timer decorator
+def timeit(function):
+    def timed(*args, **kwargs):
+        start = time.time()
+        result = function(*args, **kwargs)
+        end = time.time()
+        runtime = end - start
+
+        print('{}: FINISHED in {} sec ({} min)'.format(function.__name__,
+                                                       runtime, runtime / 60))
+        return result
+    return timed
 
 
 class Plotter():
 
-    def __init__(self, x, y, username):
+    @timeit
+    def __init__(self, x, y, desc):
         self.x = x
         self.y = y
-        self.username = username
+        self.desc = desc
         py.sign_in("ryin", "dyg27kojki")
-        self.layout = Layout(title='{}\'s Sentiment Graph'.format(username),
+        self.layout = Layout(title='{}\'s Sentiment Graph'.format(desc),
                              xaxis=XAxis(
             title='Date and Time',
             font=Font(
@@ -33,16 +51,17 @@ class Plotter():
         self.data = Data([Scatter(x=x, y=y, mode="lines+markers")])
 
     def __str__(self):
-        return str('X values: {}\nY values: {}'.format(x, y))
+        return 'X values: {}\nY values: {}'.format(x, y)
 
     def save_graph(self, num):
-        if os.path.isfile('static/img/{}.png'.format(self.username)):
-            os.remove('static/img/{}.png'.format(self.username))
-        py.image.save_as({'data': self.data, 'layout': self.layout}, 'static/img/{}_{}.png'.format(self.username, num))
+        if os.path.isfile('static/img/{}.png'.format(self.desc)):
+            os.remove('static/img/{}.png'.format(self.desc))
+        py.image.save_as({'data': self.data, 'layout': self.layout},
+                         'static/img/{}_{}.png'.format(self.desc, num))
 
     def open_graph(self):
         plot_url = py.plot(self.data, layout=self.layout,
-                           filename='{}\'s Tweet Sentiment'.format(self.username))
+                           filename='Tweet Sentiment for {}'.format(self.desc))
         return plot_url
 
 if __name__ == '__main__':
@@ -50,5 +69,6 @@ if __name__ == '__main__':
         x, y = pickle.load(f)
 
     plotter = Plotter(x, y, '@locodoco')
+    print(plotter)
     plotter.save_graph()
     plotter.open_graph()
