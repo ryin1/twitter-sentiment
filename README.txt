@@ -1,4 +1,4 @@
-Group members: Raymond Yin
+Group members: Raymond Yin, Joseph Cappadona
 
 Brief Description of Project Goals/Features:
 Twitter Sentiment Analysis is deployed as a webapp on Flask, and has two options:
